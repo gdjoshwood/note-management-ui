@@ -33,6 +33,7 @@ function App() {
 
   // Create Functionality
   const addNoteHandler = useCallback((e) => {
+    e.preventDefault();
     setNotes([...notes, {
       content: {value: newNoteValue, dirty: newNoteValue}, 
       priority: {value: newNotePriority, dirty: newNotePriority}, 
@@ -116,6 +117,11 @@ function App() {
             if (searchNotesValue) {
               notesFormatted = notesFormatted.filter(note => note.content.value.indexOf(searchNotesValue) > -1)
             }
+            if (notesFormatted.length === 0) {
+              return <div className="EmptyState">
+                No {priority.toLowerCase()} priority notes
+              </div>
+            }
             return notesFormatted.map(note => <li data-note-index={note.id} className="NoteItem">
               {note.isEditing 
                 ? <div className="NoteItemControls">
@@ -142,17 +148,28 @@ function App() {
 
       </div>
       <div className="AppActions">
-        <div className="NoteCreator">
-          <textarea placeholder="Jot down your thoughts..." className="NoteCreatorInput" autoFocus value={newNoteValue} onChange={changeNewNoteValue}/>
-          <select onChange={changeNewNotePriority}>
-            {PRIORITY_TYPES.map(priority => 
-              <option value={priority}>{priority}</option>
-            )}
-          </select>
-          <button type="button" onClick={addNoteHandler}>Add Note</button>
-        </div>
+        <form onSubmit={addNoteHandler} className="NoteCreator">
+          <label>
+            <textarea placeholder="Jot down your thoughts..." className="NoteCreatorInput" autoFocus value={newNoteValue} onChange={changeNewNoteValue}/>
+            <span>Content</span>
+          </label>
+          <div className="FieldGroup">
+            <label>
+              <span>Priority&nbsp;</span>
+              <select defaultValue={DEFAULT_NEW_NOTE_PRIORITY} onChange={changeNewNotePriority}>
+                {PRIORITY_TYPES.map(priority => 
+                  <option value={priority}>{priority}</option>
+                )}
+              </select>
+            </label>
+            <button type="submit">Create</button>
+          </div>
+        </form>
         <div className="LiveSearch">
-          <textarea placeholder="Search notes" className="NoteCreatorInput" value={searchNotesValue} onChange={changeSearchNotesValue}/>
+          <label>
+            <textarea placeholder="Search notes" className="NoteCreatorInput" value={searchNotesValue} onChange={changeSearchNotesValue}/>
+            <span>Search</span>
+          </label>
         </div>
       </div>
 
