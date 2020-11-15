@@ -26,14 +26,19 @@
 }
 
 .NoteItemActions {
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1.25px;
-  color: gray;
-  font-size: 0.7rem;
+
   cursor: pointer;
   
   > * {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.25px;
+    color: gray;
+    font-size: 0.7rem;
     margin: 0 0.3em;
+  }
+
+  button {
+    color: #222;
   }
 }

@@ -1,7 +1,10 @@
 import logo from './logo.svg';
 import './App.scss';
-import {useState, useCallback} from 'react';
+import {useState, useCallback, useEffect} from 'react';
 
+
+
+const serializedNotes = localStorage && JSON.parse(localStorage.getItem('notes'));
 const PRIORITY_TYPES = ['Low', 'Medium', 'High']
 
 const DEFAULT_NEW_NOTE_VALUE = '';
@@ -14,11 +17,19 @@ const getNoteIndexFromElementWithList = (element, notes) => {
 }
 
 function App() {
-  const [notes, setNotes] = useState([]);
+  const [notes, setNotes] = useState(serializedNotes || []);
   const getNoteIndexFromElement = e => getNoteIndexFromElementWithList(e, notes);
   const [newNoteId, setNewNoteId] = useState(DEFAULT_NEW_NOTE_ID);
   const [newNoteValue, setNewNoteValue] = useState(DEFAULT_NEW_NOTE_VALUE); 
   const [newNotePriority, setNewNotePriority] = useState(DEFAULT_NEW_NOTE_PRIORITY); 
+
+  useEffect(() => {
+    // Serialize on any state change
+    localStorage.setItem('notes', JSON.stringify(notes))
+  });
+
+
+  // Create Functionality
   const addNoteHandler = useCallback((e) => {
     setNotes([...notes, {
       content: {value: newNoteValue, dirty: newNoteValue}, 
@@ -36,6 +47,7 @@ function App() {
     setNewNotePriority(e.currentTarget.value);
   }, [])
 
+  // Modification Functionality
   const editNoteValue = useCallback((e) => {
     const newNotes = [...notes];
     const noteIndex = getNoteIndexFromElement(e);
@@ -72,11 +84,14 @@ function App() {
     setNotes(newNotes);
   }, [notes])
 
+
+  // Delete functionality
   const deleteNote = useCallback((e) => {
     const newNotes = [...notes]
     newNotes.splice(getNoteIndexFromElement(e), 1);
     setNotes(newNotes);
   }, [notes])
+  
   return (
     <div className="App">
       <div className="Notes">
