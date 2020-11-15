@@ -2,7 +2,11 @@ import logo from './logo.svg';
 import './App.css';
 import {useState, useCallback} from 'react';
 
-const DEFAULT_NEW_NOTE = '';
+const PRIORITY_TYPES = ['Low', 'Medium', 'High']
+
+const DEFAULT_NEW_NOTE_VALUE = '';
+const DEFAULT_NEW_NOTE_ID = 0;
+const DEFAULT_NEW_NOTE_PRIORITY = PRIORITY_TYPES[0];
 
 const getNoteIndex = (element) => {
   return parseInt(element.target.closest('.NoteItem').dataset.noteIndex);
@@ -10,21 +14,38 @@ const getNoteIndex = (element) => {
 
 function App() {
   const [notes, setNotes] = useState([]);
-  const [newNoteValue, setNewNoteValue] = useState(DEFAULT_NEW_NOTE); 
+  const [newNoteId, setNewNoteId] = useState(DEFAULT_NEW_NOTE_ID);
+  const [newNoteValue, setNewNoteValue] = useState(DEFAULT_NEW_NOTE_VALUE); 
+  const [newNotePriority, setNewNotePriority] = useState(DEFAULT_NEW_NOTE_PRIORITY); 
   const addNoteHandler = useCallback((e) => {
     
-    setNotes([...notes, {content: newNoteValue, dirtyValue: newNoteValue}]);
-    setNewNoteValue(DEFAULT_NEW_NOTE);
-  }, [newNoteValue])
-  const changeNewNote = useCallback((e) => {
-    
+    setNotes([...notes, {
+      content: {value: newNoteValue, dirty: newNoteValue}, 
+      priority: {value: newNotePriority, dirty: newNotePriority}, 
+      id: newNoteId
+    }]);
+    setNewNoteValue(DEFAULT_NEW_NOTE_VALUE);
+    setNewNoteId(newNoteId + 1);
+  }, [newNoteValue, newNotePriority])
+  const changeNewNoteValue = useCallback((e) => {
     setNewNoteValue(e.currentTarget.value);
   }, [])
+  const changeNewNotePriority = useCallback((e) => {
+    setNewNotePriority(e.currentTarget.value);
+  }, [])
 
-  const editNote = useCallback((e) => {
+  const editNoteValue = useCallback((e) => {
     const newNotes = [...notes];
     const noteIndex = getNoteIndex(e);
-    newNotes[noteIndex].dirtyValue = e.target.value;
+    newNotes[noteIndex].content.dirty = e.target.value;
+    setNotes(newNotes);
+
+  }, [notes])
+
+  const editNotePriority = useCallback((e) => {
+    const newNotes = [...notes];
+    const noteIndex = getNoteIndex(e);
+    newNotes[noteIndex].priority.dirty = e.target.value;
     setNotes(newNotes);
 
   }, [notes])
@@ -36,14 +57,15 @@ function App() {
     setNotes(newNotes);
   }, [notes])
 
-  const commitEditValue = useCallback((e) => {
+  const commitEdits = useCallback((e) => {
     const newNotes = [...notes];
     const noteIndex = getNoteIndex(e);
-    const newValue = newNotes[noteIndex].dirtyValue
-    newNotes[noteIndex] = {
-      content: newValue,
-      dirtyValue: newValue,
-    }
+    const newValue = newNotes[noteIndex].content.dirty
+    const newPriority = newNotes[noteIndex].priority.dirty
+    newNotes[noteIndex].content = { dirty: newValue, value: newValue}
+    newNotes[noteIndex].priority = { dirty: newPriority, value: newPriority}
+    
+    newNotes[noteIndex].isEditing = false
     setNotes(newNotes);
   }, [notes])
 
@@ -52,27 +74,44 @@ function App() {
     newNotes.splice(getNoteIndex(e), 1);
     setNotes(newNotes);
   }, [notes])
-
   return (
     <div className="App">
-      <ul className="NoteList">
-        {notes.map((note, idx) => <li data-note-index={idx} className="NoteItem">
-          {note.isEditing 
-            ? <input type="text" value={note.dirtyValue} autoFocus onChange={editNote}/>
-            : <span>{note.content}</span>
-          }
-          <div className="NoteItemControls">
-          {note.isEditing
-            ? <button onClick={commitEditValue} type="button">Save</button>
-            : <span onClick={toggleEditMode}>Edit</span>}
-          {note.isEditing 
-            ? <span onClick={toggleEditMode}>Cancel</span>
-            : <span onClick={deleteNote}>Delete</span>}
-          </div>
-        </li>)}
-      </ul>
+      <div className="Notes">
+        {PRIORITY_TYPES.map(priority => <ul className={`NoteList ${priority}`}>
+          {(() => {
+            const notesByPriority = notes.filter((note => note.priority.value === priority))
+            return notesByPriority.map(note => <li data-note-index={note.id} className="NoteItem">
+              {note.isEditing 
+                ? <div className="NoteItemControls">
+                    <input type="text" value={note.content.dirty} autoFocus onChange={editNoteValue}/>
+                    <select value={note.priority.dirty} onChange={editNotePriority}>
+                      {PRIORITY_TYPES.map(priority => 
+                        <option value={priority}>{priority}</option>
+                      )}
+                    </select>
+                  </div>
+                : <span>{note.content.value}</span>
+              }
+              <div className="NoteItemActions">
+              {note.isEditing
+                ? <button onClick={commitEdits} type="button">Save</button>
+                : <span onClick={toggleEditMode}>Edit</span>}
+              {note.isEditing 
+                ? <span onClick={toggleEditMode}>Cancel</span>
+                : <span onClick={deleteNote}>Delete</span>}
+              </div>
+            </li>)
+          })()}
+        </ul>)}
+
+      </div>
       <div className="NoteCreator">
-        <input autoFocus type="text" value={newNoteValue} onChange={changeNewNote}/>
+        <input autoFocus type="text" value={newNoteValue} onChange={changeNewNoteValue}/>
+        <select onChange={changeNewNotePriority}>
+          {PRIORITY_TYPES.map(priority => 
+            <option value={priority}>{priority}</option>
+          )}
+        </select>
         <button type="button" onClick={addNoteHandler}>Add Note</button>
       </div>
     </div>
