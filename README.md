@@ -2,6 +2,7 @@
 
 Welcome to the Note Management UI! Where you can create, update, and delete any notes all in one place. Localstorage ensures serialization of your note collection and you can prioritize & search through them.
 
+Small caveat according to specification _"Allow note priority and sort order to be changed by moving them from group to group."_ means that when you change the priority for a note, its auto-increment index will be updated to push it to the bottom of the list. This ensures sort order is changed as a result of moving notes from group to group.
 
 # Pre-requisites
 ## Software

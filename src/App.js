@@ -83,6 +83,12 @@ function App() {
     const newPriority = newNotes[noteIndex].priority.dirty
 
     newNotes[noteIndex].content = { dirty: newValue, value: newValue}
+    if (newNotes[noteIndex].priority !== newPriority) {
+      const autoIncrementId = newNoteId + 1;
+      localStorage.setItem('autoIncrementId', autoIncrementId)
+      setNewNoteId(autoIncrementId);
+      newNotes[noteIndex].id = autoIncrementId;
+    }
     newNotes[noteIndex].priority = { dirty: newPriority, value: newPriority}
     
     newNotes[noteIndex].isEditing = false
@@ -118,7 +124,7 @@ function App() {
           return PRIORITY_TYPES.map(priority => <ul key={priority} className={`NoteList ${priority}`}>
             {(() => {
               const notesByPriority = notes.filter((note => note.priority.value === priority))
-              let notesFormatted = notesByPriority;
+              let notesFormatted = notesByPriority.sort((a, b) => a.id - b.id);
               if (searchNotesValue) {
                 notesFormatted = notesFormatted.filter(note => note.content.value.indexOf(searchNotesValue) > -1)
               }
