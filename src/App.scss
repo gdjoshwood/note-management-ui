@@ -50,6 +50,8 @@
   text-align: left;
   width: 90%;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
   .NoteCreator {
     height: 60%;
     button[type="submit"] {
@@ -149,5 +151,27 @@
 
   button {
     color: #222;
+  }
+}
+
+@media only screen and (min-width: 1080px) {
+  .Notes {
+    flex-direction: row; 
+    .NoteList {
+      height: 100%;
+    }
+  }
+
+  .AppActions {
+    flex-direction: row;
+    justify-content: space-between;
+    > * {
+      width: 40%;
+      margin: 1em 2em;
+      height: 100%;
+      textarea {
+        height: 6em;
+      }
+    }
   }
 }
