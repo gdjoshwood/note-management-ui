@@ -5,6 +5,7 @@ import {useState, useCallback, useEffect} from 'react';
 
 
 const serializedNotes = localStorage && JSON.parse(localStorage.getItem('notes'));
+const serializedAutoIncrementId = localStorage && parseInt(localStorage.getItem('autoIncrementId'));
 const PRIORITY_TYPES = ['Low', 'Medium', 'High']
 
 const DEFAULT_NEW_NOTE_VALUE = '';
@@ -19,7 +20,7 @@ const getNoteIndexFromElementWithList = (element, notes) => {
 function App() {
   const [notes, setNotes] = useState(serializedNotes || []);
   const getNoteIndexFromElement = e => getNoteIndexFromElementWithList(e, notes);
-  const [newNoteId, setNewNoteId] = useState(DEFAULT_NEW_NOTE_ID);
+  const [newNoteId, setNewNoteId] = useState(serializedAutoIncrementId || DEFAULT_NEW_NOTE_ID);
   const [newNoteValue, setNewNoteValue] = useState(DEFAULT_NEW_NOTE_VALUE); 
   const [newNotePriority, setNewNotePriority] = useState(DEFAULT_NEW_NOTE_PRIORITY); 
 
@@ -37,7 +38,9 @@ function App() {
       id: newNoteId
     }]);
     setNewNoteValue(DEFAULT_NEW_NOTE_VALUE);
-    setNewNoteId(newNoteId + 1);
+    const autoIncrementId = newNoteId + 1;
+    localStorage.setItem('autoIncrementId', autoIncrementId)
+    setNewNoteId(autoIncrementId);
   }, [newNoteValue, newNotePriority])
 
   const changeNewNoteValue = useCallback((e) => {
@@ -101,14 +104,14 @@ function App() {
             return notesByPriority.map(note => <li data-note-index={note.id} className="NoteItem">
               {note.isEditing 
                 ? <div className="NoteItemControls">
-                    <input type="text" value={note.content.dirty} autoFocus onChange={editNoteValue}/>
+                    <textarea value={note.content.dirty} autoFocus onChange={editNoteValue}/>
                     <select value={note.priority.dirty} onChange={editNotePriority}>
                       {PRIORITY_TYPES.map(priority => 
                         <option value={priority}>{priority}</option>
                       )}
                     </select>
                   </div>
-                : <span>{note.content.value}</span>
+                : <span className="NoteItemContent">{note.content.value}</span>
               }
               <div className="NoteItemActions">
               {note.isEditing
@@ -125,7 +128,7 @@ function App() {
       </div>
       <div className="AppActions">
         <div className="NoteCreator">
-          <input autoFocus type="text" value={newNoteValue} onChange={changeNewNoteValue}/>
+          <textarea className="NoteCreatorInput" autoFocus value={newNoteValue} onChange={changeNewNoteValue}/>
           <select onChange={changeNewNotePriority}>
             {PRIORITY_TYPES.map(priority => 
               <option value={priority}>{priority}</option>

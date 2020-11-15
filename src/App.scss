@@ -1,5 +1,6 @@
-* { 
+*, *:before, *:after { 
   font-family: sans-serif;
+  box-sizing: border-box;
 }
 
 .App {
@@ -11,18 +12,54 @@
 
 .Notes {
   height: 80vh;
+  overflow: auto;
 }
 
 .AppActions {
   height: 20vh;
+
+  .NoteCreator {
+    .NoteCreatorInput {
+      resize: none
+    }
+  }
 }
 
 .NoteList {
   list-style: none;
+  &:before {
+    color: gray;
+    letter-spacing: 1.25px;
+    text-transform: uppercase;
+    font-size: 0.7em;
+  }
+  &.High {
+    &:before {
+      content: 'High';
+    }
+    background: linear-gradient(to right, transparent, rgba(255, 0, 0, 0.1), transparent);
+  }
+  &.Medium {
+    &:before {
+      content: 'Medium';
+    }
+    background: linear-gradient(to right, transparent, rgba(255, 177, 0, 0.1), transparent);
+  }
+
+  &.Low {
+    &:before {
+      content: 'Low';
+    }
+    background: linear-gradient(to right, transparent, rgba(27, 255, 0, 0.1), transparent);
+  }
 }
 
 .NoteItem {
   height: 4em;
+  .NoteItemContent {
+    white-space: pre-line;
+    justify-content: left;
+  }
 }
 
 .NoteItemActions {
