@@ -158,6 +158,10 @@
 @media only screen and (min-width: 1080px) {
   .Notes {
     flex-direction: row; 
+    .EmptyHero {
+      position: relative;
+      left: 10%;
+    }
     .NoteList {
       height: 100%;
 
