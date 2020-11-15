@@ -8,6 +8,7 @@
   display: flex;
   justify-content: center;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .Notes {
@@ -17,10 +18,23 @@
 
 .AppActions {
   height: 20vh;
-
   .NoteCreator {
+    height: 60%;
     .NoteCreatorInput {
-      resize: none
+      height: 60%;
+    }
+  }
+
+  textarea {
+    resize: none;
+    width: 100%;
+    font-size: 1.4em;
+    padding: 0.6em 0.2em;
+    outline: 0;
+    border: 1px solid #222;
+    transition: all 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    &:focus {
+      border: 4px solid hsl(180, 100%, 20%);        
     }
   }
 }

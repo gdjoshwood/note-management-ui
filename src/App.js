@@ -22,6 +22,7 @@ function App() {
   const getNoteIndexFromElement = e => getNoteIndexFromElementWithList(e, notes);
   const [newNoteId, setNewNoteId] = useState(serializedAutoIncrementId || DEFAULT_NEW_NOTE_ID);
   const [newNoteValue, setNewNoteValue] = useState(DEFAULT_NEW_NOTE_VALUE); 
+  const [searchNotesValue, setSearchNotesValue] = useState(''); 
   const [newNotePriority, setNewNotePriority] = useState(DEFAULT_NEW_NOTE_PRIORITY); 
 
   useEffect(() => {
@@ -95,13 +96,23 @@ function App() {
     setNotes(newNotes);
   }, [notes])
   
+
+  // Search functionality
+  const changeSearchNotesValue = useCallback((e) => {
+    setSearchNotesValue(e.target.value);
+  }, [notes]);
+
   return (
     <div className="App">
       <div className="Notes">
         {PRIORITY_TYPES.map(priority => <ul className={`NoteList ${priority}`}>
           {(() => {
             const notesByPriority = notes.filter((note => note.priority.value === priority))
-            return notesByPriority.map(note => <li data-note-index={note.id} className="NoteItem">
+            let notesFormatted = notesByPriority;
+            if (searchNotesValue) {
+              notesFormatted = notesFormatted.filter(note => note.content.value.indexOf(searchNotesValue) > -1)
+            }
+            return notesFormatted.map(note => <li data-note-index={note.id} className="NoteItem">
               {note.isEditing 
                 ? <div className="NoteItemControls">
                     <textarea value={note.content.dirty} autoFocus onChange={editNoteValue}/>
@@ -128,7 +139,7 @@ function App() {
       </div>
       <div className="AppActions">
         <div className="NoteCreator">
-          <textarea className="NoteCreatorInput" autoFocus value={newNoteValue} onChange={changeNewNoteValue}/>
+          <textarea placeholder="Jot down your thoughts..." className="NoteCreatorInput" autoFocus value={newNoteValue} onChange={changeNewNoteValue}/>
           <select onChange={changeNewNotePriority}>
             {PRIORITY_TYPES.map(priority => 
               <option value={priority}>{priority}</option>
@@ -136,7 +147,11 @@ function App() {
           </select>
           <button type="button" onClick={addNoteHandler}>Add Note</button>
         </div>
+        <div className="LiveSearch">
+          <textarea placeholder="Search notes" className="NoteCreatorInput" value={searchNotesValue} onChange={changeSearchNotesValue}/>
+        </div>
       </div>
+
     </div>
   );
 }
