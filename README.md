@@ -1,6 +1,6 @@
 # Note Management UI
 
-Welcome to the Note Management UI!
+Welcome to the Note Management UI! Where you can create, update, and delete any notes you to save for later. Localstorage ensures serialization of your note collection and you can prioritize & search through them.
 
 
 # Pre-requisites
