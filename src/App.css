@@ -1,3 +1,18 @@
+* { 
+  font-family: 'Open Sans', sans-serif;
+}
+
 .App {
   text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.Notes {
+  height: 80vh;
+}
+
+.AppActions {
+  height: 20vh;
 }

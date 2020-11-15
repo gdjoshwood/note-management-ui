@@ -108,14 +108,16 @@ function App() {
         </ul>)}
 
       </div>
-      <div className="NoteCreator">
-        <input autoFocus type="text" value={newNoteValue} onChange={changeNewNoteValue}/>
-        <select onChange={changeNewNotePriority}>
-          {PRIORITY_TYPES.map(priority => 
-            <option value={priority}>{priority}</option>
-          )}
-        </select>
-        <button type="button" onClick={addNoteHandler}>Add Note</button>
+      <div className="AppActions">
+        <div className="NoteCreator">
+          <input autoFocus type="text" value={newNoteValue} onChange={changeNewNoteValue}/>
+          <select onChange={changeNewNotePriority}>
+            {PRIORITY_TYPES.map(priority => 
+              <option value={priority}>{priority}</option>
+            )}
+          </select>
+          <button type="button" onClick={addNoteHandler}>Add Note</button>
+        </div>
       </div>
     </div>
   );
