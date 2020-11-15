@@ -120,7 +120,8 @@
 }
 
 .NoteItem {
-  min-height: 5em;
+  min-height: 6em;
+  padding-top: 1em;
   .NoteItemContent {
     white-space: pre-line;
     justify-content: left;
@@ -159,6 +160,15 @@
     flex-direction: row; 
     .NoteList {
       height: 100%;
+
+      .NoteItem {
+        .NoteItemActions {
+          visibility: hidden;
+        }
+        &:hover .NoteItemActions {
+          visibility: visible;
+        }
+      }
     }
   }
 
