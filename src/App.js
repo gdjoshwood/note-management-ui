@@ -110,48 +110,54 @@ function App() {
         {searchNotesValue && <span>Searching notes for "{searchNotesValue}"</span>}
       </header>
       <div className="Notes">
-        {PRIORITY_TYPES.map(priority => <ul className={`NoteList ${priority}`}>
-          {(() => {
-            const notesByPriority = notes.filter((note => note.priority.value === priority))
-            let notesFormatted = notesByPriority;
-            if (searchNotesValue) {
-              notesFormatted = notesFormatted.filter(note => note.content.value.indexOf(searchNotesValue) > -1)
-            }
-            if (notesFormatted.length === 0) {
-              return <div className="EmptyState">
-                No {priority.toLowerCase()} priority notes
-              </div>
-            }
-            return notesFormatted.map(note => <li data-note-index={note.id} className="NoteItem">
-              {note.isEditing 
-                ? <div className="NoteItemControls">
-                    <textarea value={note.content.dirty} autoFocus onChange={editNoteValue}/>
-                    <select value={note.priority.dirty} onChange={editNotePriority}>
-                      {PRIORITY_TYPES.map(priority => 
-                        <option value={priority}>{priority}</option>
-                      )}
-                    </select>
-                  </div>
-                : <span className="NoteItemContent">{note.content.value}</span>
+        {(() => {
+          if (notes.length === 0) {
+            return <div className="EmptyHero">Get started by making a note <div className="Indicator">⬇</div></div>
+          } 
+
+          return PRIORITY_TYPES.map(priority => <ul className={`NoteList ${priority}`}>
+            {(() => {
+              const notesByPriority = notes.filter((note => note.priority.value === priority))
+              let notesFormatted = notesByPriority;
+              if (searchNotesValue) {
+                notesFormatted = notesFormatted.filter(note => note.content.value.indexOf(searchNotesValue) > -1)
               }
-              <div className="NoteItemActions">
-              {note.isEditing
-                ? <button onClick={commitEdits} type="button">Save</button>
-                : <span onClick={toggleEditMode}>Edit</span>}
-              {note.isEditing 
-                ? <span onClick={toggleEditMode}>Cancel</span>
-                : <span onClick={deleteNote}>Delete</span>}
-              </div>
-            </li>)
-          })()}
-        </ul>)}
+              if (notesFormatted.length === 0) {
+                return <div className="EmptyState">
+                  No {priority.toLowerCase()} priority notes{(searchNotesValue) ? ' found' : ''}
+                </div>
+              }
+              return notesFormatted.map(note => <li data-note-index={note.id} className="NoteItem">
+                {note.isEditing 
+                  ? <div className="NoteItemControls">
+                      <textarea value={note.content.dirty} autoFocus onChange={editNoteValue}/>
+                      <select value={note.priority.dirty} onChange={editNotePriority}>
+                        {PRIORITY_TYPES.map(priority => 
+                          <option value={priority}>{priority}</option>
+                        )}
+                      </select>
+                    </div>
+                  : <span className="NoteItemContent">{note.content.value}</span>
+                }
+                <div className="NoteItemActions">
+                {note.isEditing
+                  ? <button onClick={commitEdits} type="button">Save</button>
+                  : <span onClick={toggleEditMode}>Edit</span>}
+                {note.isEditing 
+                  ? <span onClick={toggleEditMode}>Cancel</span>
+                  : <span onClick={deleteNote}>Delete</span>}
+                </div>
+              </li>)
+            })()}
+          </ul>)
+        })()}
 
       </div>
       <div className="AppActions">
         <form onSubmit={addNoteHandler} className="NoteCreator">
           <label>
             <textarea placeholder="Jot down your thoughts..." className="NoteCreatorInput" autoFocus value={newNoteValue} onChange={changeNewNoteValue}/>
-            <span>Content</span>
+            <span>Make New Note</span>
           </label>
           <div className="FieldGroup">
             <label>
@@ -167,8 +173,8 @@ function App() {
         </form>
         <div className="LiveSearch">
           <label>
-            <textarea placeholder="Search notes" className="NoteCreatorInput" value={searchNotesValue} onChange={changeSearchNotesValue}/>
-            <span>Search</span>
+            <textarea placeholder="Type something to begin filtering your notes..." className="NoteCreatorInput" value={searchNotesValue} onChange={changeSearchNotesValue}/>
+            <span>Search Your Notes</span>
           </label>
         </div>
       </div>
