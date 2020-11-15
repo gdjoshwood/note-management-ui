@@ -6,7 +6,7 @@ import {useState, useCallback, useEffect} from 'react';
 
 const serializedNotes = localStorage && JSON.parse(localStorage.getItem('notes'));
 const serializedAutoIncrementId = localStorage && parseInt(localStorage.getItem('autoIncrementId'));
-const PRIORITY_TYPES = ['High', 'Medium', 'Low']
+const PRIORITY_TYPES = ['High', 'Normal', 'Low']
 
 const DEFAULT_NEW_NOTE_VALUE = '';
 const DEFAULT_NEW_NOTE_ID = 0;
