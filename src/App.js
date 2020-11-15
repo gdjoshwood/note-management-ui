@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+
 import './App.scss';
 import {useState, useCallback, useEffect} from 'react';
 
@@ -43,7 +43,7 @@ function App() {
     const autoIncrementId = newNoteId + 1;
     localStorage.setItem('autoIncrementId', autoIncrementId)
     setNewNoteId(autoIncrementId);
-  }, [newNoteValue, newNotePriority])
+  }, [newNoteValue, newNotePriority, newNoteId, notes])
 
   const changeNewNoteValue = useCallback((e) => {
     setNewNoteValue(e.currentTarget.value);
@@ -59,7 +59,7 @@ function App() {
     newNotes[noteIndex].content.dirty = e.target.value;
     setNotes(newNotes);
 
-  }, [notes])
+  }, [notes, getNoteIndexFromElement])
 
   const editNotePriority = useCallback((e) => {
     const newNotes = [...notes];
@@ -67,14 +67,14 @@ function App() {
     newNotes[noteIndex].priority.dirty = e.target.value;
     setNotes(newNotes);
 
-  }, [notes])
+  }, [notes, getNoteIndexFromElement])
 
   const toggleEditMode = useCallback((e) => {
     const newNotes = [...notes];
     const noteIndex = getNoteIndexFromElement(e);
     newNotes[noteIndex].isEditing = !newNotes[noteIndex].isEditing
     setNotes(newNotes);
-  }, [notes])
+  }, [notes, getNoteIndexFromElement])
 
   const commitEdits = useCallback((e) => {
     const newNotes = [...notes];
@@ -87,7 +87,7 @@ function App() {
     
     newNotes[noteIndex].isEditing = false
     setNotes(newNotes);
-  }, [notes])
+  }, [notes, getNoteIndexFromElement])
 
 
   // Delete functionality
@@ -95,13 +95,13 @@ function App() {
     const newNotes = [...notes]
     newNotes.splice(getNoteIndexFromElement(e), 1);
     setNotes(newNotes);
-  }, [notes])
+  }, [notes, getNoteIndexFromElement])
   
 
   // Search functionality
   const changeSearchNotesValue = useCallback((e) => {
     setSearchNotesValue(e.target.value);
-  }, [notes]);
+  }, []);
 
   return (
     <div className="App">
@@ -115,7 +115,7 @@ function App() {
             return <div className="EmptyHero">Get started by making a note <div className="Indicator">⬇</div></div>
           } 
 
-          return PRIORITY_TYPES.map(priority => <ul className={`NoteList ${priority}`}>
+          return PRIORITY_TYPES.map(priority => <ul key={priority} className={`NoteList ${priority}`}>
             {(() => {
               const notesByPriority = notes.filter((note => note.priority.value === priority))
               let notesFormatted = notesByPriority;
@@ -127,13 +127,13 @@ function App() {
                   No {priority.toLowerCase()} priority notes{(searchNotesValue) ? ' found' : ''}
                 </div>
               }
-              return notesFormatted.map(note => <li data-note-index={note.id} className="NoteItem">
+              return notesFormatted.map(note => <li key={note.id} data-note-index={note.id} className="NoteItem">
                 {note.isEditing 
                   ? <div className="NoteItemControls">
                       <textarea value={note.content.dirty} autoFocus onChange={editNoteValue}/>
                       <select value={note.priority.dirty} onChange={editNotePriority}>
                         {PRIORITY_TYPES.map(priority => 
-                          <option value={priority}>{priority}</option>
+                          <option key={priority} value={priority}>{priority}</option>
                         )}
                       </select>
                     </div>
@@ -164,7 +164,7 @@ function App() {
               <span>Priority&nbsp;</span>
               <select defaultValue={DEFAULT_NEW_NOTE_PRIORITY} onChange={changeNewNotePriority}>
                 {PRIORITY_TYPES.map(priority => 
-                  <option value={priority}>{priority}</option>
+                  <option key={priority} value={priority}>{priority}</option>
                 )}
               </select>
             </label>
