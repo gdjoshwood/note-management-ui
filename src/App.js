@@ -24,7 +24,6 @@ function App() {
   const [newNoteValue, setNewNoteValue] = useState(DEFAULT_NEW_NOTE_VALUE); 
   const [searchNotesValue, setSearchNotesValue] = useState(''); 
   const [newNotePriority, setNewNotePriority] = useState(DEFAULT_NEW_NOTE_PRIORITY); 
-
   useEffect(() => {
     // Serialize on any state change
     localStorage.setItem('notes', JSON.stringify(notes))
@@ -46,6 +45,7 @@ function App() {
   }, [newNoteValue, newNotePriority, newNoteId, notes])
 
   const changeNewNoteValue = useCallback((e) => {
+    
     setNewNoteValue(e.currentTarget.value);
   }, [])
   const changeNewNotePriority = useCallback((e) => {
