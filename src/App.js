@@ -8,17 +8,18 @@ const DEFAULT_NEW_NOTE_VALUE = '';
 const DEFAULT_NEW_NOTE_ID = 0;
 const DEFAULT_NEW_NOTE_PRIORITY = PRIORITY_TYPES[0];
 
-const getNoteIndex = (element) => {
-  return parseInt(element.target.closest('.NoteItem').dataset.noteIndex);
+const getNoteIndexFromElementWithList = (element, notes) => {
+  const uniqueId = parseInt(element.target.closest('.NoteItem').dataset.noteIndex);
+  return notes.map(e => e.id).indexOf(uniqueId);
 }
 
 function App() {
   const [notes, setNotes] = useState([]);
+  const getNoteIndexFromElement = e => getNoteIndexFromElementWithList(e, notes);
   const [newNoteId, setNewNoteId] = useState(DEFAULT_NEW_NOTE_ID);
   const [newNoteValue, setNewNoteValue] = useState(DEFAULT_NEW_NOTE_VALUE); 
   const [newNotePriority, setNewNotePriority] = useState(DEFAULT_NEW_NOTE_PRIORITY); 
   const addNoteHandler = useCallback((e) => {
-    
     setNotes([...notes, {
       content: {value: newNoteValue, dirty: newNoteValue}, 
       priority: {value: newNotePriority, dirty: newNotePriority}, 
@@ -27,6 +28,7 @@ function App() {
     setNewNoteValue(DEFAULT_NEW_NOTE_VALUE);
     setNewNoteId(newNoteId + 1);
   }, [newNoteValue, newNotePriority])
+
   const changeNewNoteValue = useCallback((e) => {
     setNewNoteValue(e.currentTarget.value);
   }, [])
@@ -36,7 +38,7 @@ function App() {
 
   const editNoteValue = useCallback((e) => {
     const newNotes = [...notes];
-    const noteIndex = getNoteIndex(e);
+    const noteIndex = getNoteIndexFromElement(e);
     newNotes[noteIndex].content.dirty = e.target.value;
     setNotes(newNotes);
 
@@ -44,7 +46,7 @@ function App() {
 
   const editNotePriority = useCallback((e) => {
     const newNotes = [...notes];
-    const noteIndex = getNoteIndex(e);
+    const noteIndex = getNoteIndexFromElement(e);
     newNotes[noteIndex].priority.dirty = e.target.value;
     setNotes(newNotes);
 
@@ -52,16 +54,17 @@ function App() {
 
   const toggleEditMode = useCallback((e) => {
     const newNotes = [...notes];
-    const noteIndex = getNoteIndex(e);
+    const noteIndex = getNoteIndexFromElement(e);
     newNotes[noteIndex].isEditing = !newNotes[noteIndex].isEditing
     setNotes(newNotes);
   }, [notes])
 
   const commitEdits = useCallback((e) => {
     const newNotes = [...notes];
-    const noteIndex = getNoteIndex(e);
+    const noteIndex = getNoteIndexFromElement(e);
     const newValue = newNotes[noteIndex].content.dirty
     const newPriority = newNotes[noteIndex].priority.dirty
+
     newNotes[noteIndex].content = { dirty: newValue, value: newValue}
     newNotes[noteIndex].priority = { dirty: newPriority, value: newPriority}
     
@@ -71,7 +74,7 @@ function App() {
 
   const deleteNote = useCallback((e) => {
     const newNotes = [...notes]
-    newNotes.splice(getNoteIndex(e), 1);
+    newNotes.splice(getNoteIndexFromElement(e), 1);
     setNotes(newNotes);
   }, [notes])
   return (
