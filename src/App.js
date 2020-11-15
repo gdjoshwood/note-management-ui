@@ -6,11 +6,11 @@ import {useState, useCallback, useEffect} from 'react';
 
 const serializedNotes = localStorage && JSON.parse(localStorage.getItem('notes'));
 const serializedAutoIncrementId = localStorage && parseInt(localStorage.getItem('autoIncrementId'));
-const PRIORITY_TYPES = ['Low', 'Medium', 'High']
+const PRIORITY_TYPES = ['High', 'Medium', 'Low']
 
 const DEFAULT_NEW_NOTE_VALUE = '';
 const DEFAULT_NEW_NOTE_ID = 0;
-const DEFAULT_NEW_NOTE_PRIORITY = PRIORITY_TYPES[0];
+const DEFAULT_NEW_NOTE_PRIORITY = PRIORITY_TYPES[2];
 
 const getNoteIndexFromElementWithList = (element, notes) => {
   const uniqueId = parseInt(element.target.closest('.NoteItem').dataset.noteIndex);
@@ -104,6 +104,10 @@ function App() {
 
   return (
     <div className="App">
+      <header>
+        <h1>Note Manager</h1>
+        {searchNotesValue && <span>Searching notes for "{searchNotesValue}"</span>}
+      </header>
       <div className="Notes">
         {PRIORITY_TYPES.map(priority => <ul className={`NoteList ${priority}`}>
           {(() => {

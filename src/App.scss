@@ -9,10 +9,13 @@
   justify-content: center;
   flex-direction: column;
   overflow: hidden;
+  header {
+    height: 10vh;
+  }
 }
 
 .Notes {
-  height: 80vh;
+  height: 70vh;
   overflow: auto;
 }
 
